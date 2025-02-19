@@ -107,7 +107,7 @@ public class EtlapController {
             return;
         }
         try {
-            etlapService.updatePrice(selectedEtel.getId(), value, isPercentage); // Itt az updatePrice metódust hívjuk
+            etlapService.updatePrice(selectedEtel.getId(), value, isPercentage);
             loadEtlap();
             showAlert("Siker", "Áremelés sikeresen végrehajtva!");
         } catch (SQLException e) {
