@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.etlap.EtlapController">
+    <top>
+        <ToolBar>
+            <Button text="Új étel felvétele" onAction="#handleUjEtel" />
+            <Button text="Törlés" onAction="#handleTorles" />
+        </ToolBar>
+    </top>
+    <center>
+        <TableView fx:id="etlapTable">
+            <columns>
+                <TableColumn text="Név" fx:id="colNev" />
+                <TableColumn text="Kategória" fx:id="colKategoria" />
+                <TableColumn text="Ár (Ft)" fx:id="colAr" />
+            </columns>
+        </TableView>
+    </center>
+    <bottom>
+        <VBox spacing="10">
+            <Label text="Áremelés" />
+            <HBox spacing="5">
+                <Spinner fx:id="percentSpinner" min="5" max="50" initialValue="10" />
+                <Label text="%" />
+                <Button text="Emelés" onAction="#handleAremelesSzazalek" />
+            </HBox>
+            <HBox spacing="5">
+                <Spinner fx:id="fixSpinner" min="50" max="3000" initialValue="500" />
+                <Label text="Ft" />
+                <Button text="Emelés" onAction="#handleAremelesFix" />
+            </HBox>
+        </VBox>
+    </bottom>
+</BorderPane>

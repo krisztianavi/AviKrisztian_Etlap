@@ -21,32 +21,57 @@ public class EtlapService {
 
     public List<Etlap> getAll() throws SQLException {
         List<Etlap> etelek = new ArrayList<>();
-        Statement statement = connection.createStatement();
-        String sql = "SELECT * FROM etlap";
-        ResultSet result = statement.executeQuery(sql);
-        while (result.next()) {
-            int id = result.getInt("id");
-            String nev = result.getString("nev");
-            int ar = result.getInt("ar");
-            String leiras = result.getString("leiras");
-            etelek.add(new Etlap(id, nev, ar, leiras));
+        String sql = "SELECT * FROM etlap ORDER BY nev ASC";
+        try (Statement statement = connection.createStatement(); ResultSet result = statement.executeQuery(sql)) {
+            while (result.next()) {
+                int id = result.getInt("id");
+                String nev = result.getString("nev");
+                String kategoria = result.getString("kategoria");
+                int ar = result.getInt("ar");
+                String leiras = result.getString("leiras");
+                etelek.add(new Etlap(id, nev, kategoria, ar, leiras));
+            }
         }
         return etelek;
     }
 
     public boolean create(Etlap etel) throws SQLException {
-        String sql = "INSERT INTO etlap(nev, ar, leiras) VALUES(?,?,?);";
-        PreparedStatement statement = connection.prepareStatement(sql);
-        statement.setString(1, etel.getNev());
-        statement.setInt(2, etel.getAr());
-        statement.setString(3, etel.getLeiras());
-        return statement.executeUpdate() == 1;
+        String sql = "INSERT INTO etlap (nev, ar, leiras) VALUES (?, ?, ?)";
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setString(1, etel.getNev());
+            statement.setInt(2, etel.getAr());
+            statement.setString(3, etel.getLeiras());
+            return statement.executeUpdate() == 1;
+        }
     }
 
     public boolean delete(int id) throws SQLException {
-        String sql = "DELETE FROM etlap WHERE id = ?;";
-        PreparedStatement statement = connection.prepareStatement(sql);
-        statement.setInt(1, id);
-        return statement.executeUpdate() == 1;
+        String sql = "DELETE FROM etlap WHERE id = ?";
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setInt(1, id);
+            return statement.executeUpdate() == 1;
+        }
+    }
+
+    public boolean updatePrice(int id, int amount, boolean isPercentage) throws SQLException {
+        String sql = isPercentage
+                ? "UPDATE etlap SET ar = ar + (ar * ? / 100) WHERE id = ?"
+                : "UPDATE etlap SET ar = ar + ? WHERE id = ?";
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setInt(1, amount);
+            statement.setInt(2, id);
+            return statement.executeUpdate() == 1;
+        }
+    }
+
+    public List<String> getCategories() throws SQLException {
+        List<String> categories = new ArrayList<>();
+        String sql = "SELECT DISTINCT kategoria FROM etlap";
+        try (Statement statement = connection.createStatement(); ResultSet result = statement.executeQuery(sql)) {
+            while (result.next()) {
+                categories.add(result.getString("kategoria"));
+            }
+        }
+        return categories;
     }
 }
